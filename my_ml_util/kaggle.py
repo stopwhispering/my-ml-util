@@ -7,14 +7,14 @@ import matplotlib.pyplot as plt
 
 
 def get_runtime():
-    if '/kaggle/input/' in __file__:
+    if 'get_ipython' in locals() and 'runtime' in get_ipython().config.IPKernelApp.connection_file:  # noqa
+        return 'kaggle'  # kaggle interactive
+    if '/kaggle/input/' in __file__ or '/opt/conda/lib/' in __file__:
         return 'kaggle'  # kaggle from dataset script
     if 'get_ipython' not in locals():
         return 'script'  # local script
     if 'Roaming' in get_ipython().config.IPKernelApp.connection_file:  # noqa
         return 'local'
-    if 'runtime' in get_ipython().config.IPKernelApp.connection_file:  # noqa
-        return 'kaggle'  # kaggle interactive
     return 'background'  # kaggle in background (save & run or submit to competition)
 
 

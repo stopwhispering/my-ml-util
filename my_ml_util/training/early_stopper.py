@@ -1,6 +1,3 @@
-from icecream import ic
-
-
 class EarlyStopper:
     def __init__(self, patience=2):
         self.patience = patience
@@ -24,26 +21,3 @@ class EarlyStopper:
                 break
 
         self.early_stop = counter_not_improved > self.patience
-
-
-if __name__ == '__main__':
-    early_stopper = EarlyStopper(patience=1)
-    early_stopper(5.0)
-    assert not early_stopper.early_stop
-    early_stopper(5.6)
-    assert not early_stopper.early_stop
-    early_stopper(5.7)
-    assert early_stopper.early_stop
-
-
-    early_stopper = EarlyStopper(patience=1)
-    early_stopper(5.0)
-    assert not early_stopper.early_stop
-    early_stopper(5.6)
-    assert not early_stopper.early_stop
-    early_stopper(4.9)
-    assert not early_stopper.early_stop
-    early_stopper(5.4)
-    assert not early_stopper.early_stop
-    early_stopper(5.0)
-    assert early_stopper.early_stop
