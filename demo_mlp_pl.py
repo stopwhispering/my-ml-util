@@ -1,9 +1,9 @@
-from my_ml_util.mlp import MLP, seed, MLPBackboneConfig, HeadConfig, NumericalEmbeddingsConfig
+from my_ml_util.mlp_pl import MLP, seed, MLPBackboneConfig, HeadConfig, NumericalEmbeddingsConfig
 import pandas as pd
 import torch
 
-from my_ml_util.mlp.categorical_embeddings import CategoricalEmbeddingsConfig
-from my_ml_util.mlp.resnet_backbone import ResnetBackboneConfig
+from my_ml_util.mlp_pl.categorical_embeddings import CategoricalEmbeddingsConfig
+from my_ml_util.mlp_pl.resnet_backbone import ResnetBackboneConfig
 
 device = 'cpu'
 

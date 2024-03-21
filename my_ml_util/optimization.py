@@ -2,6 +2,8 @@ import pandas as pd
 
 from typing import Any
 
+import wandb
+
 
 def get_weight_combinations(n_weights: int, step: int) -> list[tuple]:
     combinations = []
@@ -29,3 +31,30 @@ def get_params_from_optuna_results(ser_results: pd.Series) -> dict[str, Any]:
     params = {k[7:]: v for k, v in ser_params_dict.items()}
     return params
 
+
+def get_sweep_run_config(project: str,
+                         sweep_id: str,
+                         run: str,
+                         key: str,
+                         return_run=False
+                         ) -> dict[str, Any] | tuple[dict[str, Any], wandb.apis.public.Run]:
+    """Get hyperparameters for a run in a WandB sweep."""
+    wandb.login(key=key)
+    api = wandb.Api()
+    sweep = api.sweep(f"stopwhispering314/{project}/{sweep_id}")
+
+    ser_name = [r.name for r in sweep.runs]
+    # ser_oof_scores = [r.summary.get("auc_oof") for r in sweep.runs]
+
+    df = (
+        pd.DataFrame({"name": ser_name,
+                      # "auc_oof": ser_oof_scores,
+                      "run": sweep.runs})
+        .dropna()
+        # .sort_values("auc_oof", ascending=False)
+    )
+    print(f'Found {len(df)} runs in Sweep {sweep_id} (project {project})')
+
+    run_hyperparam_config = df[df["name"] == run].iloc[0]["run"].config
+    return (run_hyperparam_config if not return_run
+            else (run_hyperparam_config, df[df["name"] == run].iloc[0]["run"]))

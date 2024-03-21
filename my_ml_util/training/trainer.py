@@ -180,7 +180,7 @@ class Trainer:
                 break
 
             if self.early_stopper_patience != -1 and early_stopper.early_stop:
-                print(f'Early stopping after epoch {epoch} w/ val score {val_mean_score:.4f}')
+                print(f'Early stopping after epoch {epoch} w/ best val score {saved_checkpoint_score:.4f}')
                 early_stopped = True
                 break
 
@@ -242,4 +242,4 @@ class Trainer:
                 f"{epoch} {mode}. Loss: {loss.item() :.4f} ({current_epoch_mean_loss:.4f}) | lr: {current_lr :.5f}")
         else:
             progress_bar.set_description(
-                f"{epoch} {mode} | Avg. Loss: {current_epoch_mean_loss:.4f} ACC: {current_epoch_mean_score:.2f} [lr: {current_lr :.7f}]")
+                f"{epoch} {mode} | Avg. Loss: {current_epoch_mean_loss:.4f} ACC: {current_epoch_mean_score:.4f} [lr: {current_lr :.7f}]")

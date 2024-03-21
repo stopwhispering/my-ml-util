@@ -10,9 +10,10 @@ import numpy as np  # noqa
 import torch
 import torch.nn as nn
 
-from my_ml_util.mlp.backbone import BackboneConfig, Block
+from my_ml_util.mlp.mlp_backbone import MLPBackboneConfig, MLPBackbone
 from my_ml_util.mlp.categorical_embeddings import CategoricalEmbeddings, CategoricalEmbeddingsConfig
 from my_ml_util.mlp.numerical_embeddings import NumericalEmbeddings, NumericalEmbeddingsConfig
+from my_ml_util.mlp.resnet_backbone import ResnetBackboneConfig, ResnetBackbone
 
 ModuleType = str | Callable[..., nn.Module]
 NumericalEmbedArchitectureType = Literal['MLP', 'MLP-L', 'MLP-LR', 'MLP-P', 'MLP-PL', 'MLP-PLR']
@@ -47,7 +48,7 @@ class MLP(nn.Module):
             self,
             *,
             n_features: int,
-            backbone_config: BackboneConfig,
+            backbone_config: MLPBackboneConfig | ResnetBackboneConfig,
             head_config: HeadConfig,
             numerical_embeddings_config: NumericalEmbeddingsConfig | None = None,
             categorical_embeddings_config: CategoricalEmbeddingsConfig | None = None,
@@ -65,13 +66,8 @@ class MLP(nn.Module):
                                                                  categorical_embeddings_config,
                                                                  n_features)
 
-        # if len(backbone_config.out_features_per_layer) > 2:
-        #     assert len(set(backbone_config.out_features_per_layer[1:-1])) == 1, (
-        #         'If out_features_per_layer contains more than three elements, then'
-        #         ' all elements except for the first and the last ones must be equal.'
-        #     )
-
-        if categorical_embeddings_config is not None and len(categorical_embeddings_config.column_idxs) > 0:
+        if categorical_embeddings_config is not None and len(
+                categorical_embeddings_config.column_idxs) > 0:
             assert (categorical_embeddings_config.cat_column_n_unique_values is not None and
                     len(categorical_embeddings_config.cat_column_n_unique_values) ==
                     len(categorical_embeddings_config.column_idxs)), (
@@ -96,23 +92,33 @@ class MLP(nn.Module):
         ) if (numerical_embeddings_config is not None and
               numerical_embeddings_config.architecture != 'MLP') else None
 
-        self.backbone = nn.Sequential(
-            *[
-                Block(
-                    in_features=(backbone_config.out_features_per_layer[i - 1] if i
-                                 else self.backbone_in_features),
-                    out_features=out_features,
-                    bias=True,
-                    dropout=backbone_config.dropout,
-                    apply_batch_normalization=backbone_config.apply_batch_normalization,
-                    apply_layer_normalization=backbone_config.apply_layer_normalization,
-                )
-                for i, out_features in enumerate(backbone_config.out_features_per_layer)
-            ]
-        )
+        if isinstance(backbone_config, ResnetBackboneConfig):
+            self.backbone = ResnetBackbone(
+                in_features=self.backbone_in_features,
+                hidden_layer_size_in=backbone_config.hidden_layer_size_in,
+                hidden_layer_size_out=backbone_config.hidden_layer_size_out,
+                n_residual_blocks=backbone_config.n_residual_blocks,
+                dropout=backbone_config.dropout,
+                apply_batch_normalization=backbone_config.apply_batch_normalization,
+            )
+
+        elif isinstance(backbone_config, MLPBackboneConfig):
+            self.backbone = MLPBackbone(
+                in_features=self.backbone_in_features,
+                out_features_per_layer=backbone_config.out_features_per_layer,
+                dropout=backbone_config.dropout,
+                apply_batch_normalization=backbone_config.apply_batch_normalization,
+                apply_layer_normalization=backbone_config.apply_layer_normalization,
+            )
+        else:
+            raise ValueError(
+                f'backbone_config must be either MLPBackboneConfig or ResnetBackboneConfig,'
+                f' not {type(backbone_config)}')
 
         if not headless:
-            self.head = nn.Linear(backbone_config.out_features_per_layer[-1], head_config.dim_out)
+            # self.head = nn.Linear(backbone_config.out_features_per_layer[-1], head_config.dim_out)
+            self.head = nn.Linear(self.backbone.out_features,
+                                  head_config.dim_out)
 
     @staticmethod
     def get_column_indexes(numerical_embeddings_config: NumericalEmbeddingsConfig | None,
@@ -124,7 +130,8 @@ class MLP(nn.Module):
         num_column_idxs = (numerical_embeddings_config.column_idxs
                            if numerical_embeddings_config is not None else ())
         all_column_idxs = tuple(np.arange(n_features))
-        passthrough_column_idxs = tuple(set(all_column_idxs) - set(num_column_idxs) - set(cat_column_idxs))
+        passthrough_column_idxs = tuple(
+            set(all_column_idxs) - set(num_column_idxs) - set(cat_column_idxs))
 
         assert isinstance(cat_column_idxs, tuple)
         assert isinstance(num_column_idxs, tuple)

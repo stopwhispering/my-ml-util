@@ -16,6 +16,7 @@ torch = "^2.1.2"  # kaggle currently '2.1.2+cpu' / '2.1.2'
 tqdm = "^4.66.1"  # kaggle '4.66.1'
 scikit-learn = "^1.2.2"  # kaggle '1.2.2'
 wandb = "^0.16.2"  # kaggle '0.16.2'
+lightning = "^2.2.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.2"

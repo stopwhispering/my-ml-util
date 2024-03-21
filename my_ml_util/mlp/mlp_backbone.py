@@ -6,11 +6,14 @@ import torch.nn as nn
 
 
 @dataclass
-class BackboneConfig:
+class MLPBackboneConfig:
     out_features_per_layer: list[int]
     dropout: float | None
     apply_batch_normalization: bool = False
     apply_layer_normalization: bool = False
+
+
+BackboneConfig = MLPBackboneConfig  # alias, remove if not needed in the future
 
 
 class Block(nn.Module):
@@ -54,6 +57,7 @@ class MLPBackbone(nn.Module):
     A multi-layer perceptron (MLP) backbone consisting of 1..n FC layers.
     """
     def __init__(self,
+                 in_features: int,
                  out_features_per_layer: list[int],
                  dropout: float | None,
                  apply_batch_normalization: bool,
@@ -64,7 +68,7 @@ class MLPBackbone(nn.Module):
             *[
                 Block(
                     in_features=(out_features_per_layer[i - 1] if i
-                                 else self.backbone_in_features),
+                                 else in_features),
                     out_features=out_features,
                     bias=True,
                     dropout=dropout,
@@ -74,6 +78,10 @@ class MLPBackbone(nn.Module):
                 for i, out_features in enumerate(out_features_per_layer)
             ]
         )
+
+    @property
+    def out_features(self) -> int:
+        return self.blocks[-1].linear.out_features
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.blocks(x)

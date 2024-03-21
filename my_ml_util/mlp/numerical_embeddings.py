@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Callable, Literal
 import math
-
 import numpy as np  # noqa
 import torch
 import torch.nn as nn
