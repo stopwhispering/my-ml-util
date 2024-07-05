@@ -3,12 +3,12 @@ import pandas as pd
 import torch
 
 from my_ml_util.mlp_pl.categorical_embeddings import CategoricalEmbeddingsConfig
-from my_ml_util.mlp_pl.mlp import HeadConfig, MLP, seed
+from my_ml_util.mlp_pl.mlp import HeadConfig, MLP, seed, DeviceType
 from my_ml_util.mlp_pl.mlp_backbone import MLPBackboneConfig
 from my_ml_util.mlp_pl.numerical_embeddings import NumericalEmbeddingsConfig
 from my_ml_util.mlp_pl.resnet_backbone import ResnetBackboneConfig
 
-device = 'cpu'
+device: DeviceType = 'cuda'
 
 
 def test_simple_mlp():
@@ -310,7 +310,7 @@ def test_ad_hoc():
     print(pred)
 
 
-seed(42)
+seed(42, device=device)
 test_simple_mlp()
 test_mlp_with_categorical_embeddings()
 test_mlp_l()

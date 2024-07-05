@@ -20,19 +20,21 @@ from my_ml_util.mlp_pl.categorical_embeddings import CategoricalEmbeddings, Cate
 from my_ml_util.mlp_pl.numerical_embeddings import NumericalEmbeddings, NumericalEmbeddingsConfig
 from my_ml_util.mlp_pl.resnet_backbone import ResnetBackboneConfig, ResnetBackbone
 
+DeviceType = Literal['cpu', 'cuda']
 ModuleType = str | Callable[..., pl.LightningModule]
 NumericalEmbedArchitectureType = Literal['MLP', 'MLP-L', 'MLP-LR', 'MLP-P', 'MLP-PL', 'MLP-PLR']
 
 
-def seed(seed: int) -> None:
+def seed(seed: int, device: DeviceType) -> None:
     """Set random seed for reproducibility."""
     np.random.seed(seed)
     random.seed(0)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    torch.use_deterministic_algorithms(True)
-    torch.backends.cudnn.deterministic = True
+    if device != 'cuda':
+        torch.use_deterministic_algorithms(True)
+        torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False  # warning: this might impair performance
 
 
