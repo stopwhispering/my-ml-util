@@ -1,4 +1,5 @@
-from my_ml_util.training import EarlyStopper
+# from my_ml_util.training import EarlyStopper
+from my_ml_util.training.early_stopper import EarlyStopper
 
 early_stopper = EarlyStopper(patience=1)
 early_stopper(5.0)

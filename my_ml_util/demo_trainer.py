@@ -3,7 +3,9 @@ import torch
 from sklearn import datasets
 from torch.utils.data import TensorDataset, DataLoader
 
-from my_ml_util.training import Trainer
+from my_ml_util.training.trainer import Trainer
+
+# from my_ml_util.training import Trainer
 
 ds = datasets.load_iris()
 x = torch.Tensor(ds['data'])

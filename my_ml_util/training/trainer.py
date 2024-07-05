@@ -8,7 +8,10 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from sklearn import metrics
 
-from my_ml_util.training import EarlyStopper
+from my_ml_util.training.early_stopper import EarlyStopper
+
+
+# from my_ml_util.training import EarlyStopper
 
 
 def train_or_validate_one_epoch_sample_fn(model,
@@ -20,11 +23,15 @@ def train_or_validate_one_epoch_sample_fn(model,
                                           progress_bar,
                                           show_progress_bar: bool,
                                           update_progress_bar_fn: callable,
+                                          # metric_fn: callable = None,  # todo Protocol
                                           ):
     current_epoch_losses = []
     current_epoch_scores = []
     current_epoch_targets_list = []
     current_epoch_outputs_list = []
+
+    # if metric_fn is None:
+    #     metric_fn = metrics.accuracy_score
 
     for i, batch_data in enumerate(progress_bar):
 
@@ -53,8 +60,9 @@ def train_or_validate_one_epoch_sample_fn(model,
         current_epoch_mean_loss = statistics.mean(current_epoch_losses)
 
         predicted_classes = all_outputs.max(1).indices  # [n]), torch.int64
-        score_current_batch = metrics.accuracy_score(y_true=all_targets.cpu().numpy(),
-                                                     y_pred=predicted_classes.detach().cpu().numpy(), )
+        score_current_batch = metrics.accuracy_score(
+            y_true=all_targets.cpu().numpy(),
+                                        y_pred=predicted_classes.detach().cpu().numpy(), )
 
         current_epoch_scores.append(score_current_batch)
         current_epoch_mean_score = statistics.mean(current_epoch_scores)
