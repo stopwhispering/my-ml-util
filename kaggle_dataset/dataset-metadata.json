@@ -1,0 +1,37 @@
+{
+  "id": "stopwhispering/my-ml-util",
+  "id_no": 4287102,
+  "datasetSlugNullable": "my-ml-util",
+  "ownerUserNullable": "stopwhispering",
+  "usabilityRatingNullable": 0.0,
+  "titleNullable": "my-ml-util",
+  "subtitleNullable": "",
+  "descriptionNullable": "",
+  "datasetId": 4287102,
+  "datasetSlug": "my-ml-util",
+  "hasDatasetSlug": true,
+  "ownerUser": "stopwhispering",
+  "hasOwnerUser": true,
+  "usabilityRating": 0.0,
+  "hasUsabilityRating": true,
+  "totalViews": 77,
+  "totalVotes": 0,
+  "totalDownloads": 2,
+  "title": "my-ml-util",
+  "hasTitle": true,
+  "subtitle": "",
+  "hasSubtitle": true,
+  "description": "",
+  "hasDescription": true,
+  "isPrivate": true,
+  "keywords": [],
+  "licenses": [
+    {
+      "nameNullable": "unknown",
+      "name": "unknown",
+      "hasName": true
+    }
+  ],
+  "collaborators": [],
+  "data": []
+}
