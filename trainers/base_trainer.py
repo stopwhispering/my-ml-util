@@ -15,6 +15,7 @@ sklearn.set_config(transform_output="pandas")
 logger = logging.getLogger(__name__)
 
 
+
 class HasPredict(Protocol):
     def predict(self, X) -> np.ndarray: ...
 
