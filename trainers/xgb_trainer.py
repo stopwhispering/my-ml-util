@@ -10,7 +10,7 @@ import logging
 
 from xgboost.callback import EvaluationMonitor
 
-from .base_trainer import Trainer
+from podcast.trainers.base_trainer import Trainer
 
 logger = logging.getLogger(__name__)
 
@@ -130,14 +130,14 @@ class XGBTrainer(Trainer):
                 **self.params_xgb,
             )
         if early_stop:
-            callbacks = xgb.callback.EvaluationMonitor(period=self.log_evaluation) if self.log_evaluation else []
+            # callbacks = xgb.callback.EvaluationMonitor(period=self.log_evaluation) if self.log_evaluation else []  # todo fix
             estimator.fit(
                 X=x_train,
                 y=y_train,
                 eval_set=[(x_val, y_val)],
                 verbose=False,
                 sample_weight=ser_sample_weights_fold,  # default: None
-                callbacks=callbacks,
+                # callbacks=callbacks,
             )
             return estimator, estimator.best_iteration
         else:

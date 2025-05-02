@@ -6,7 +6,7 @@ from sklearn.base import BaseEstimator
 
 import logging
 
-from .base_trainer import Trainer
+from podcast.trainers.base_trainer import Trainer, HasPredict
 
 logger = logging.getLogger(__name__)
 

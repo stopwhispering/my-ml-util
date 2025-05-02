@@ -6,7 +6,7 @@ import pandas as pd
 from catboost import CatBoostRegressor
 from sklearn.base import BaseEstimator
 
-from .base_trainer import Trainer
+from podcast.trainers.base_trainer import Trainer
 
 logger = logging.getLogger(__name__)
 

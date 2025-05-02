@@ -250,6 +250,12 @@ class Trainer(ABC):
                     ser_targets_train=ser_targets_train_fold,
                     i_fold=fold_no,
                 )
+
+                # df_train_fold = df_train_fold.dropna(subset=['Episode_Length_minutes'])
+                # ser_targets_train_fold = ser_targets_train_fold.loc[df_train_fold.index]
+                # print('WARN!!!!!!!!!!!''')
+
+
                 list_df_test_with_te.append(df_test_with_fold_te)
 
             logger.debug(f"{df_train_fold.shape=}")
